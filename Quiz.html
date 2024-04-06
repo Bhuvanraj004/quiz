@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interactive Quiz</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-color: #f4f4f4;
+    }
+
+    #quiz-container {
+      width: 400px;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+      text-align: center;
+    }
+
+    .question {
+      margin-bottom: 20px;
+    }
+
+    .options {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .options li {
+      margin-bottom: 10px;
+      cursor: pointer;
+    }
+
+    button {
+      padding: 10px 20px;
+      background-color: #007bff;
+      border: none;
+      color: #fff;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <div id="quiz-container">
+    <h2>Interactive Quiz</h2>
+    <div class="question" id="question"></div>
+    <ul class="options" id="options"></ul>
+    <div id="feedback"></div>
+    <button id="nextButton" onclick="nextQuestion()">Next</button>
+    <div id="score"></div>
+    <div id="feedbackInput" style="display: none;">
+      <input type="text" id="userFeedback" placeholder="Enter your feedback">
+      <button onclick="submitFeedback()">Submit Feedback</button>
+      <div id="feedbackMessage" style="display: none;">Your feedback has been sent successfully.</div>
+    </div>
+  </div>
+
+  <script>
+    const quizData = [
+      {
+        question: "What is the capital of France?",
+        options: ["Paris", "London", "Berlin", "Rome"],
+        answer: "Paris"
+      },
+      {
+        question: "What is 2 + 2?",
+        options: ["3", "4", "5", "6"],
+        answer: "4"
+      },
+      {
+        question: "Which planet is known as the Red Planet?",
+        options: ["Earth", "Jupiter", "Mars", "Saturn"],
+        answer: "Mars"
+      }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const feedbackElement = document.getElementById('feedback');
+    const scoreElement = document.getElementById('score');
+    const nextButton = document.getElementById('nextButton');
+    const feedbackInput = document.getElementById('feedbackInput');
+    const feedbackMessage = document.getElementById('feedbackMessage');
+
+    function loadQuestion() {
+      const currentQuizData = quizData[currentQuestion];
+      questionElement.innerText = currentQuizData.question;
+
+      optionsElement.innerHTML = '';
+
+      currentQuizData.options.forEach(option => {
+        const li = document.createElement('li');
+        li.innerText = option;
+        li.addEventListener('click', () => {
+          checkAnswer(option);
+        });
+        optionsElement.appendChild(li);
+      });
+    }
+
+    function checkAnswer(answer) {
+      const currentQuizData = quizData[currentQuestion];
+
+      if (answer === currentQuizData.answer) {
+        feedbackElement.innerText = 'Correct!';
+        score++;
+      } else {
+        feedbackElement.innerText = 'Incorrect!';
+      }
+
+      optionsElement.querySelectorAll('li').forEach(li => {
+        li.removeEventListener('click', checkAnswer);
+      });
+
+      nextButton.style.display = 'block';
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+      if (currentQuestion < quizData.length) {
+        loadQuestion();
+        feedbackElement.innerText = '';
+        nextButton.style.display = 'none';
+      } else {
+        showFeedbackInput();
+      }
+    }
+
+    function showFeedbackInput() {
+      questionElement.innerText = `You have completed the quiz! Your score is ${score} out of ${quizData.length}.`;
+      optionsElement.innerHTML = '';
+      feedbackElement.innerText = '';
+      scoreElement.innerText = '';
+      feedbackInput.style.display = 'block';
+    }
+
+    function submitFeedback() {
+      const userFeedback = document.getElementById('userFeedback').value;
+      // You can handle the user feedback here, for example, send it to a server-side script
+      console.log('User Feedback:', userFeedback);
+      feedbackMessage.style.display = 'block';
+    }
+
+    // Initial load
+    loadQuestion();
+  </script>
+</body>
+</html>
